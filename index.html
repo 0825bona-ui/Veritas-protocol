@@ -962,13 +962,13 @@
     setTimeout(() => { el.style.display = 'none'; }, 4000);
   }
 </script>
-</body
-  <script type="module">
-  // Firebase SDK 가져오기
+</body>
+</script>
+</html>
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  // Firebase 설정 (본인의 Firebase 콘솔에서 복사한 내용으로 바꾸세요)
   const firebaseConfig = {
     apiKey: "AIzaSyCdbtT_YPywQyzN3EOGHXewIkA_6-FbjOA",
     authDomain: "veritas-protocol.firebaseapp.com",
@@ -978,10 +978,7 @@
     appId: "1:258366044798:web:9f3315d86db114a9ddf62f"
   };
 
-  // Firebase 초기화
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  
-  console.log("Firebase가 성공적으로 연결되었습니다!");
+  console.log("연결 성공");
 </script>
-</html>
