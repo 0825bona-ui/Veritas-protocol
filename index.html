@@ -983,6 +983,23 @@
   let repudiations = [];
 
   // 데이터 로드
+ // 1. 기존 데이터를 서버로 옮기는 마이그레이션 함수
+  async function migrateData() {
+    const localData = JSON.parse(localStorage.getItem('vp_contents') || '[]');
+    
+    if (localData.length > 0) {
+      console.log(`${localData.length}건의 데이터를 서버로 이전 중...`);
+      for (const item of localData) {
+        await addDoc(colRef, item);
+      }
+      alert('기존 데이터 ' + localData.length + '건을 서버로 이전 완료했습니다!');
+      localStorage.removeItem('vp_contents'); // 완료 후 로컬 데이터 정리
+    }
+    loadData(); // 이전 후 데이터 로드
+  }
+
+  // 2. loadData() 호출 대신 이 함수를 호출하세요
+  migrateData();
   async function loadData() {
     const cSnap = await getDocs(colRef);
     contents = [];
