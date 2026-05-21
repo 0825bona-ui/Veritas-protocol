@@ -961,6 +961,9 @@
     el.style.display = 'block';
     setTimeout(() => { el.style.display = 'none'; }, 4000);
   }
+  <div id="dashboard">
+  <h2>저장된 데이터 목록</h2>
+  </div>
 </script>
 </body>
 </script>
@@ -982,3 +985,18 @@
   const db = getFirestore(app);
   console.log("연결 성공");
 </script>
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+async function showData() {
+  const dashboard = document.getElementById('dashboard'); // 데이터를 뿌려줄 공간
+  const querySnapshot = await getDocs(collection(db, "Veritas-protocol")); // 여기서 'Veritas-protocol' 컬렉션을 가져옵니다
+  
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    dashboard.innerHTML += `<div style="border:1px solid #ccc; padding:10px; margin:10px;">
+                              <p>${JSON.stringify(data)}</p>
+                            </div>`;
+  });
+}
+
+showData();
