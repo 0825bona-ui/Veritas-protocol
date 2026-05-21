@@ -964,14 +964,15 @@
   <div id="dashboard">
   <h2>저장된 데이터 목록</h2>
   </div>
-</script>
-</body>
-</script>
-</html>
+  <div id="dashboard">
+  <h2>저장된 콘텐츠 목록</h2>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+  // Firebase 설정
   const firebaseConfig = {
     apiKey: "AIzaSyCdbtT_YPywQyzN3EOGHXewIkA_6-FbjOA",
     authDomain: "veritas-protocol.firebaseapp.com",
@@ -983,20 +984,24 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  console.log("연결 성공");
+
+
+  async function showData() {
+    const dashboard = document.getElementById('dashboard');
+    const querySnapshot = await getDocs(collection(db, "Veritas-protocol"));
+    
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      
+      dashboard.innerHTML += `<div style="border:1px solid #444; padding:15px; margin-bottom:10px;">
+                                <p>${JSON.stringify(data)}</p>
+                              </div>`;
+    });
+  }
+
+  showData(); // 함수 실행
 </script>
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-async function showData() {
-  const dashboard = document.getElementById('dashboard'); // 데이터를 뿌려줄 공간
-  const querySnapshot = await getDocs(collection(db, "Veritas-protocol")); // 여기서 'Veritas-protocol' 컬렉션을 가져옵니다
-  
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    dashboard.innerHTML += `<div style="border:1px solid #ccc; padding:10px; margin:10px;">
-                              <p>${JSON.stringify(data)}</p>
-                            </div>`;
-  });
-}
-
-showData();
+</script>
+</body>
+</script>
+</html>
