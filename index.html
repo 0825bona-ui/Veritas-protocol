@@ -4,543 +4,34 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Veritas Protocol</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #07080a;
-      --surface: #0e1014;
-      --surface2: #151820;
-      --border: #1e2330;
-      --accent: #4fffb0;
-      --accent2: #00bfff;
-      --danger: #ff4d6d;
-      --warn: #ffb347;
-      --text: #e8eaf0;
-      --muted: #5a6070;
-      --font-display: 'Syne', sans-serif;
-      --font-body: 'Noto Sans KR', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --bg: #07080a; --surface: #0e1014; --surface2: #151820; --border: #1e2330;
+      --accent: #4fffb0; --accent2: #00bfff; --danger: #ff4d6d; --warn: #ffb347;
+      --text: #e8eaf0; --muted: #5a6070;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      background: rgba(7,8,10,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-logo {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 1.2rem;
-      letter-spacing: -0.02em;
-      color: var(--accent);
-    }
-
-    .nav-logo span { color: var(--text); }
-
-    .nav-links {
-      display: flex;
-      gap: 0.25rem;
-    }
-
-    .nav-btn {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .nav-btn:hover { color: var(--text); background: var(--surface2); }
-    .nav-btn.active { color: var(--accent); background: rgba(79,255,176,0.08); }
-
-    /* PAGES */
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: rgba(7,8,10,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--accent); }
+    .nav-btn { background: none; border: none; color: var(--muted); padding: 0.5rem 1rem; cursor: pointer; transition: all 0.2s; }
+    .nav-btn.active { color: var(--accent); background: rgba(79,255,176,0.08); border-radius: 6px; }
     .page { display: none; padding-top: 5rem; min-height: 100vh; }
     .page.active { display: block; }
-
-    /* HOME PAGE */
-    .hero {
-      position: relative;
-      padding: 5rem 2rem 4rem;
-      max-width: 900px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .hero-tag {
-      display: inline-block;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--accent);
-      border: 1px solid rgba(79,255,176,0.3);
-      padding: 0.3rem 0.8rem;
-      border-radius: 100px;
-      margin-bottom: 2rem;
-      letter-spacing: 0.05em;
-    }
-
-    .hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      font-weight: 800;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero h1 .hl { color: var(--accent); }
-
-    .hero p {
-      font-size: 1.05rem;
-      color: var(--muted);
-      line-height: 1.8;
-      max-width: 600px;
-      margin: 0 auto 3rem;
-    }
-
-    .hero-btns {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #07080a;
-      border: none;
-      padding: 0.8rem 2rem;
-      border-radius: 8px;
-      font-family: var(--font-body);
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
-
-    .btn-outline {
-      background: none;
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 0.8rem 2rem;
-      border-radius: 8px;
-      font-family: var(--font-body);
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* PROBLEM SECTION */
-    .section {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 3rem 2rem;
-    }
-
-    .section-label {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-
-    .section h2 {
-      font-family: var(--font-display);
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      letter-spacing: -0.02em;
-    }
-
-    .problem-box {
-      background: rgba(255,77,109,0.06);
-      border: 1px solid rgba(255,77,109,0.2);
-      border-radius: 12px;
-      padding: 1.5rem 2rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .problem-box h3 {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      color: var(--danger);
-      margin-bottom: 0.5rem;
-    }
-
-    .problem-box p {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    /* LAYERS */
-    .layers {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .layer-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.2s;
-    }
-
-    .layer-card:hover { border-color: var(--accent); }
-
-    .layer-num {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-      letter-spacing: 0.08em;
-    }
-
-    .layer-card h3 {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .layer-card p {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.65;
-    }
-
-    .layer-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--accent);
-      opacity: 0.4;
-    }
-
-    /* DIVIDER */
-    .divider {
-      max-width: 900px;
-      margin: 0 auto;
-      border: none;
-      border-top: 1px solid var(--border);
-    }
-
-    /* REGISTER PAGE */
-    .page-header {
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 3rem 2rem 1.5rem;
-    }
-
-    .page-header h1 {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 0.5rem;
-    }
-
-    .page-header p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
-
-    .form-wrap {
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 0 2rem 4rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-
-    label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--muted);
-      margin-bottom: 0.4rem;
-      letter-spacing: 0.03em;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--accent);
-    }
-
-    textarea { min-height: 100px; resize: vertical; }
-
-    .hash-display {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: var(--accent);
-      word-break: break-all;
-      min-height: 3rem;
-    }
-
-    .meta-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    .submit-area {
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .toast {
-      display: none;
-      background: rgba(79,255,176,0.1);
-      border: 1px solid rgba(79,255,176,0.3);
-      border-radius: 8px;
-      padding: 1rem 1.25rem;
-      margin-top: 1rem;
-      font-size: 0.85rem;
-      color: var(--accent);
-    }
-
-    .toast.error {
-      background: rgba(255,77,109,0.1);
-      border-color: rgba(255,77,109,0.3);
-      color: var(--danger);
-    }
-
-    /* DASHBOARD */
-    .dash-wrap {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 2rem 4rem;
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.25rem;
-    }
-
-    .stat-card .val {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 800;
-      color: var(--accent);
-    }
-
-    .stat-card .lbl {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-top: 0.2rem;
-    }
-
-    .content-list { display: flex; flex-direction: column; gap: 0.75rem; }
-
-    .content-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.25rem 1.5rem;
-      transition: border-color 0.2s;
-    }
-
-    .content-item:hover { border-color: var(--border); }
-
-    .content-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 0.6rem;
-    }
-
-    .content-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
-
-    .badge {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 100px;
-      white-space: nowrap;
-    }
-
-    .badge-safe { background: rgba(79,255,176,0.1); color: var(--accent); border: 1px solid rgba(79,255,176,0.2); }
-    .badge-warn { background: rgba(255,179,71,0.1); color: var(--warn); border: 1px solid rgba(255,179,71,0.2); }
-    .badge-danger { background: rgba(255,77,109,0.1); color: var(--danger); border: 1px solid rgba(255,77,109,0.2); }
-
-    .content-meta {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-bottom: 0.5rem;
-    }
-
-    .content-hash {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--muted);
-      opacity: 0.6;
-    }
-
-    .repudiation-count {
-      font-size: 0.78rem;
-      color: var(--warn);
-      margin-top: 0.4rem;
-    }
-
-    /* REPUDIATION PAGE */
-    .rep-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
-
-    .rep-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.25rem 1.5rem;
-    }
-
-    .rep-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
-
-    .rep-target {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--accent2);
-    }
-
-    .rep-reason {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 0.5rem;
-    }
-
-    .rep-footer {
-      font-size: 0.72rem;
-      color: var(--muted);
-      opacity: 0.6;
-      font-family: var(--font-mono);
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 3rem;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .section-tab {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .tab-btn {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 0.5rem 1.25rem;
-      border-radius: 6px;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .tab-btn.active {
-      background: rgba(79,255,176,0.08);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* NOISE OVERLAY */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.4;
-    }
-
-    .glow {
-      position: fixed;
-      width: 600px; height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(79,255,176,0.04) 0%, transparent 70%);
-      top: -200px; left: -200px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    nav, .page { position: relative; z-index: 1; }
+    .hero { position: relative; padding: 5rem 2rem; max-width: 900px; margin: 0 auto; text-align: center; }
+    .btn-primary { background: var(--accent); color: #07080a; border: none; padding: 0.8rem 2rem; border-radius: 8px; cursor: pointer; }
+    .section { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+    .form-wrap { max-width: 700px; margin: 0 auto; padding: 0 2rem 4rem; }
+    input, textarea, select { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text); margin-bottom: 1rem; }
+    .hash-display { background: var(--surface2); padding: 0.75rem 1rem; font-family: monospace; font-size: 0.8rem; color: var(--accent); margin-bottom: 1rem; }
+    .toast { display: none; padding: 1rem; margin-top: 1rem; border-radius: 8px; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-
-<div class="glow"></div>
 
 <nav>
   <div class="nav-logo">Veritas<span>Protocol</span></div>
@@ -552,415 +43,76 @@
   </div>
 </nav>
 
-<!-- HOME -->
-<div class="page active" id="page-home">
-  <div class="hero">
-    <div class="hero-tag">미디어 신뢰 회복 프로토콜</div>
-    <h1>거짓말쟁이의 배당을<br><span class="hl">구조적으로 차단</span>한다</h1>
-    <p>딥페이크 기술의 등장으로 진짜도 가짜라고 우길 수 있는 시대가 왔습니다. Veritas Protocol은 콘텐츠의 출처와 맥락을 불변으로 고정해 거짓말의 비용을 구조적으로 높입니다.</p>
-    <div class="hero-btns">
-      <button class="btn-primary" onclick="showPage('register')">콘텐츠 등록하기</button>
-      <button class="btn-outline" onclick="showPage('dashboard')">대시보드 보기</button>
-    </div>
-  </div>
-
-  <hr class="divider">
-
-  <div class="section">
-    <div class="section-label">// 문제 정의</div>
-    <h2>왜 기존 해결책은 실패하는가</h2>
-
-    <div class="problem-box">
-      <h3>거짓말쟁이의 배당 (Liar's Dividend)</h3>
-      <p>딥페이크 기술의 존재 자체가 "진짜도 가짜라고 우길 수 있는 면죄부"를 제공합니다. 이제 입증 책임이 진짜에게 전가되었고, 거짓말의 한계비용은 0에 수렴합니다.</p>
-    </div>
-
-    <div class="problem-box" style="background:rgba(0,191,255,0.05);border-color:rgba(0,191,255,0.2);">
-      <h3 style="color:var(--accent2)">미디어 신뢰의 역설</h3>
-      <p>신뢰를 회복하기 위해 검증 시스템을 만들면, 그 시스템 자체를 신뢰해야 하는 재귀적 문제가 발생합니다. C2PA 같은 기존 솔루션은 출처를 증명하지만, 출처를 만든 주체의 신뢰성은 증명하지 못합니다.</p>
-    </div>
-  </div>
-
-  <hr class="divider">
-
-  <div class="section">
-    <div class="section-label">// 해결 구조</div>
-    <h2>3개 레이어로 구성된 대응 아키텍처</h2>
-    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1.5rem;line-height:1.7">신뢰를 증명하는 대신, 거짓말의 비용 함수를 재설계합니다. 각 레이어는 조작 난이도를 기하급수적으로 높입니다.</p>
-
-    <div class="layers">
-      <div class="layer-card">
-        <div class="layer-num">LAYER 01 — Physical Anchoring</div>
-        <h3>물리적 지문</h3>
-        <p>콘텐츠 발행 순간의 GPS, 기상 데이터, 주변 기기 신호를 해시와 함께 고정합니다. 조작하려면 물리 세계 자체를 바꿔야 합니다.</p>
-      </div>
-      <div class="layer-card">
-        <div class="layer-num">LAYER 02 — Contextual Immutability</div>
-        <h3>맥락 불변성</h3>
-        <p>콘텐츠가 존재했던 맥락의 관계 네트워크를 DAG 구조로 고정합니다. 하나를 바꾸려면 연결된 수백 개 노드를 동시에 바꿔야 합니다.</p>
-      </div>
-      <div class="layer-card">
-        <div class="layer-num">LAYER 03 — Unrepudiability by Design</div>
-        <h3>부인 불가능성 설계</h3>
-        <p>부인 행위 자체가 체인에 영구 기록됩니다. 틀린 부인이 반복될수록 그 이력이 맥락으로 누적되어 신뢰 비용이 증가합니다.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- REGISTER -->
+<div class="page active" id="page-home"><div class="hero"><h1>거짓말쟁이의 배당을<br>구조적으로 차단합니다</h1></div></div>
 <div class="page" id="page-register">
-  <div class="page-header">
-    <h1>콘텐츠 등록</h1>
-    <p>콘텐츠를 등록하면 물리적 지문과 타임스탬프가 자동으로 생성되어 기록됩니다.</p>
-  </div>
-  <div class="form-wrap">
-    <div class="form-group">
-      <label>콘텐츠 제목</label>
-      <input type="text" id="reg-title" placeholder="등록할 콘텐츠의 제목을 입력하세요" />
+    <div class="form-wrap">
+        <input type="text" id="reg-title" placeholder="콘텐츠 제목">
+        <input type="text" id="reg-publisher" placeholder="발행자">
+        <textarea id="reg-content" placeholder="원문"></textarea>
+        <div id="hash-display" class="hash-display">해시 생성 대기중...</div>
+        <button class="btn-primary" onclick="registerContent()">등록하기</button>
+        <div id="reg-toast" class="toast"></div>
     </div>
-    <div class="form-group">
-      <label>발행자 식별자</label>
-      <input type="text" id="reg-publisher" placeholder="언론사명, 개인 식별자 등" />
-    </div>
-    <div class="form-group">
-      <label>콘텐츠 설명</label>
-      <textarea id="reg-desc" placeholder="콘텐츠에 대한 간략한 설명"></textarea>
-    </div>
-    <div class="form-group">
-      <label>콘텐츠 원문 (해시 생성용)</label>
-      <textarea id="reg-content" placeholder="원문 텍스트를 입력하면 자동으로 해시가 생성됩니다" oninput="generateHash()"></textarea>
-    </div>
-    <div class="meta-grid">
-      <div class="form-group">
-        <label>콘텐츠 유형</label>
-        <select id="reg-type">
-          <option value="news">뉴스 기사</option>
-          <option value="video">영상</option>
-          <option value="image">이미지</option>
-          <option value="document">문서</option>
-          <option value="social">소셜 미디어</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>AI 생성 여부</label>
-        <select id="reg-ai">
-          <option value="none">AI 미사용</option>
-          <option value="assisted">AI 보조 사용</option>
-          <option value="generated">AI 생성</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>생성된 콘텐츠 해시 (SHA-256)</label>
-      <div class="hash-display" id="hash-display">콘텐츠를 입력하면 해시가 자동 생성됩니다...</div>
-    </div>
-
-    <div class="form-group">
-      <label>물리적 지문 (자동 수집)</label>
-      <div class="hash-display" id="physical-display" style="color:var(--accent2)">
-        타임스탬프: <span id="ts-display">—</span><br>
-        User Agent Hash: <span id="ua-display">—</span>
-      </div>
-    </div>
-
-    <div class="submit-area">
-      <button class="btn-primary" onclick="registerContent()" style="width:100%">프로토콜에 등록하기</button>
-      <div class="toast" id="reg-toast"></div>
-    </div>
-  </div>
 </div>
-
-<!-- REPUDIATE -->
-<div class="page" id="page-repudiate">
-  <div class="page-header">
-    <h1>부인 제기</h1>
-    <p>특정 콘텐츠에 대한 부인을 제기합니다. 모든 부인 행위는 영구적으로 기록되며, 판명 결과와 함께 누적됩니다.</p>
-  </div>
-  <div class="form-wrap">
-    <div class="form-group">
-      <label>대상 콘텐츠 선택</label>
-      <select id="rep-target">
-        <option value="">— 등록된 콘텐츠 선택 —</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>부인 제기자 식별자</label>
-      <input type="text" id="rep-claimant" placeholder="부인을 제기하는 주체의 식별자" />
-    </div>
-    <div class="form-group">
-      <label>부인 유형</label>
-      <select id="rep-type">
-        <option value="deepfake">딥페이크 의혹</option>
-        <option value="misinfo">허위 정보</option>
-        <option value="manipulated">편집 조작</option>
-        <option value="context">맥락 왜곡</option>
-        <option value="identity">발행자 사칭</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>부인 근거</label>
-      <textarea id="rep-reason" placeholder="이 콘텐츠가 조작되었다고 판단하는 구체적인 근거를 서술하세요"></textarea>
-    </div>
-    <div class="submit-area">
-      <button class="btn-primary" onclick="submitRepudiation()" style="width:100%;background:var(--danger);color:#fff">부인 제기 (영구 기록됨)</button>
-      <div class="toast" id="rep-toast"></div>
-    </div>
-
-    <div style="margin-top:2.5rem">
-      <div class="section-label">// 부인 이력</div>
-      <div class="rep-list" id="rep-list">
-        <div class="empty-state">아직 제기된 부인이 없습니다.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- DASHBOARD -->
-<div class="page" id="page-dashboard">
-  <div class="page-header">
-    <h1>대시보드</h1>
-    <p>등록된 콘텐츠와 신뢰 맥락을 조회합니다.</p>
-  </div>
-  <div class="dash-wrap">
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="val" id="stat-total">0</div>
-        <div class="lbl">등록된 콘텐츠</div>
-      </div>
-      <div class="stat-card">
-        <div class="val" id="stat-rep">0</div>
-        <div class="lbl">제기된 부인</div>
-      </div>
-      <div class="stat-card">
-        <div class="val" id="stat-safe">0</div>
-        <div class="lbl">신뢰 콘텐츠</div>
-      </div>
-      <div class="stat-card">
-        <div class="val" id="stat-ai">0</div>
-        <div class="lbl">AI 생성 콘텐츠</div>
-      </div>
-    </div>
-
-    <div class="section-tab">
-      <button class="tab-btn active" onclick="filterContents('all', this)">전체</button>
-      <button class="tab-btn" onclick="filterContents('safe', this)">신뢰</button>
-      <button class="tab-btn" onclick="filterContents('warn', this)">주의</button>
-      <button class="tab-btn" onclick="filterContents('danger', this)">위험</button>
-    </div>
-
-    <div class="content-list" id="content-list">
-      <div class="empty-state">등록된 콘텐츠가 없습니다.<br>콘텐츠 등록 탭에서 먼저 등록해주세요.</div>
-    </div>
-  </div>
-</div>
+<div class="page" id="page-repudiate"><div class="form-wrap"><h2>부인 제기</h2><div id="rep-list"></div></div></div>
+<div class="page" id="page-dashboard"><div class="form-wrap"><h2>등록된 콘텐츠</h2><div id="content-list"></div></div></div>
 
 <script>
-  // STATE
-  let contents = JSON.parse(localStorage.getItem('vp_contents') || '[]');
-  let repudiations = JSON.parse(localStorage.getItem('vp_reps') || '[]');
+  // 1. Firebase 초기화
+  const firebaseConfig = {
+    apiKey: "AIzaSyCdbtT_YPywQyzN3EOGHXewIkA_6-FbjOA",
+    authDomain: "veritas-protocol.firebaseapp.com",
+    projectId: "veritas-protocol",
+    storageBucket: "veritas-protocol.firebasestorage.app",
+    messagingSenderId: "258366044798",
+    appId: "1:258366044798:web:9f3315d86db114a9ddf62f"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-  // NAV
+  // 2. 페이지 전환 로직
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
     event.target.classList.add('active');
-    if (id === 'dashboard') renderDashboard();
-    if (id === 'repudiate') { renderRepList(); populateTargets(); }
-    if (id === 'register') updatePhysical();
+    if(id === 'dashboard') loadData();
   }
 
-  // HASH
-  async function sha256(str) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-  }
-
-  async function generateHash() {
-    const content = document.getElementById('reg-content').value;
-    if (!content.trim()) {
-      document.getElementById('hash-display').textContent = '콘텐츠를 입력하면 해시가 자동 생성됩니다...';
-      return;
-    }
-    const hash = await sha256(content);
-    document.getElementById('hash-display').textContent = hash;
-  }
-
-  function updatePhysical() {
-    const now = new Date().toISOString();
-    document.getElementById('ts-display').textContent = now;
-    sha256(navigator.userAgent + now).then(h => {
-      document.getElementById('ua-display').textContent = h.substring(0, 32) + '...';
-    });
-  }
-
-  updatePhysical();
-
-  // REGISTER
+  // 3. 데이터 로드 및 저장 함수
   async function registerContent() {
-    const title = document.getElementById('reg-title').value.trim();
-    const publisher = document.getElementById('reg-publisher').value.trim();
-    const desc = document.getElementById('reg-desc').value.trim();
-    const content = document.getElementById('reg-content').value.trim();
-    const type = document.getElementById('reg-type').value;
-    const ai = document.getElementById('reg-ai').value;
-
-    if (!title || !publisher || !content) {
-      showToast('reg-toast', '제목, 발행자, 콘텐츠는 필수입니다.', true);
-      return;
-    }
-
-    const contentHash = await sha256(content);
-    const physicalHash = await sha256(navigator.userAgent + new Date().toISOString());
-    const id = await sha256(title + publisher + Date.now());
-
-    const entry = {
-      id: id.substring(0, 16),
-      title, publisher, desc, type, ai,
-      contentHash,
-      physicalHash: physicalHash.substring(0, 32),
-      timestamp: new Date().toISOString(),
-      repCount: 0
-    };
-
-    contents.push(entry);
-    localStorage.setItem('vp_contents', JSON.stringify(contents));
-
-    showToast('reg-toast', `✓ 등록 완료. 콘텐츠 ID: ${entry.id}`);
+    const title = document.getElementById('reg-title').value;
+    const content = document.getElementById('reg-content').value;
+    
+    // Firestore 저장
+    await db.collection("Veritas-protocol").add({
+      title: title,
+      content: content,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    alert("등록 완료!");
     document.getElementById('reg-title').value = '';
-    document.getElementById('reg-publisher').value = '';
-    document.getElementById('reg-desc').value = '';
     document.getElementById('reg-content').value = '';
-    document.getElementById('hash-display').textContent = '콘텐츠를 입력하면 해시가 자동 생성됩니다...';
   }
 
-  // REPUDIATION
-  function populateTargets() {
-    const sel = document.getElementById('rep-target');
-    sel.innerHTML = '<option value="">— 등록된 콘텐츠 선택 —</option>';
-    contents.forEach(c => {
-      sel.innerHTML += `<option value="${c.id}">[${c.id}] ${c.title}</option>`;
+  async function loadData() {
+    const list = document.getElementById('content-list');
+    list.innerHTML = "불러오는 중...";
+    const snapshot = await db.collection("Veritas-protocol").get();
+    
+    list.innerHTML = "";
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      list.innerHTML += `<div style="padding:10px; border-bottom:1px solid #333;">
+                          <h3>${data.title}</h3>
+                          <p>${data.content}</p>
+                         </div>`;
     });
   }
 
-  async function submitRepudiation() {
-    const target = document.getElementById('rep-target').value;
-    const claimant = document.getElementById('rep-claimant').value.trim();
-    const type = document.getElementById('rep-type').value;
-    const reason = document.getElementById('rep-reason').value.trim();
-
-    if (!target || !claimant || !reason) {
-      showToast('rep-toast', '모든 항목을 입력해주세요.', true);
-      return;
-    }
-
-    const repId = await sha256(target + claimant + Date.now());
-    const rep = {
-      id: repId.substring(0, 16),
-      targetId: target,
-      targetTitle: contents.find(c => c.id === target)?.title || '알 수 없음',
-      claimant, type, reason,
-      timestamp: new Date().toISOString(),
-      resolved: false
-    };
-
-    repudiations.push(rep);
-    // update rep count on content
-    const ci = contents.findIndex(c => c.id === target);
-    if (ci >= 0) contents[ci].repCount++;
-    localStorage.setItem('vp_reps', JSON.stringify(repudiations));
-    localStorage.setItem('vp_contents', JSON.stringify(contents));
-
-    showToast('rep-toast', `✓ 부인 제기 완료. ID: ${rep.id} — 영구 기록됨`);
-    document.getElementById('rep-claimant').value = '';
-    document.getElementById('rep-reason').value = '';
-    renderRepList();
-  }
-
-  const repTypeLabels = {
-    deepfake: '딥페이크 의혹',
-    misinfo: '허위 정보',
-    manipulated: '편집 조작',
-    context: '맥락 왜곡',
-    identity: '발행자 사칭'
-  };
-
-  function renderRepList() {
-    const el = document.getElementById('rep-list');
-    if (!repudiations.length) {
-      el.innerHTML = '<div class="empty-state">아직 제기된 부인이 없습니다.</div>';
-      return;
-    }
-    el.innerHTML = [...repudiations].reverse().map(r => `
-      <div class="rep-item">
-        <div class="rep-item-header">
-          <div class="rep-target">대상: [${r.targetId}] ${r.targetTitle}</div>
-          <span class="badge badge-danger">${repTypeLabels[r.type] || r.type}</span>
-        </div>
-        <div class="rep-reason">${r.reason}</div>
-        <div class="rep-footer">제기자: ${r.claimant} · ${new Date(r.timestamp).toLocaleString('ko-KR')} · ID: ${r.id}</div>
-      </div>
-    `).join('');
-  }
-
-  // DASHBOARD
-  let currentFilter = 'all';
-
-  function filterContents(filter, btn) {
-    currentFilter = filter;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderDashboard();
-  }
-
-  function getStatus(c) {
-    if (c.repCount >= 3) return 'danger';
-    if (c.repCount >= 1) return 'warn';
-    return 'safe';
-  }
-
-  const statusLabel = { safe: '신뢰', warn: '주의', danger: '위험' };
-  const aiLabel = { none: 'AI 미사용', assisted: 'AI 보조', generated: 'AI 생성' };
-
-  function renderDashboard() {
-    document.getElementById('stat-total').textContent = contents.length;
-    document.getElementById('stat-rep').textContent = repudiations.length;
-    document.getElementById('stat-safe').textContent = contents.filter(c => getStatus(c) === 'safe').length;
-    document.getElementById('stat-ai').textContent = contents.filter(c => c.ai !== 'none').length;
-
-    const filtered = currentFilter === 'all' ? contents : contents.filter(c => getStatus(c) === currentFilter);
-    const el = document.getElementById('content-list');
-
-    if (!filtered.length) {
-      el.innerHTML = '<div class="empty-state">해당하는 콘텐츠가 없습니다.</div>';
-      return;
-    }
-
-    el.innerHTML = [...filtered].reverse().map(c => {
-      const status = getStatus(c);
-      return `
-        <div class="content-item">
-          <div class="content-item-header">
-            <div class="content-title">${c.title}</div>
-            <span class="badge badge-${status}">${statusLabel[status]}</span>
-          </div>
-          <div class="content-meta">발행자: ${c.publisher} · 유형: ${c.type} · ${aiLabel[c.ai]} · ${new Date(c.timestamp).toLocaleString('ko-KR')}</div>
-          <div class="content-hash">HASH: ${c.contentHash}</div>
-          ${c.repCount > 0 ? `<div class="repudiation-count">⚠ 부인 제기 ${c.repCount}건</div>` : ''}
-        </div>
-      `;
-    }).join('');
-  }
-
-  function showToast(id, msg, isError = false) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.className = 'toast' + (isError ? ' error' : '');
-    el.style.display = 'block';
-    setTimeout(() => { el.style.display = 'none'; }, 4000);
-  }
+  // 초기 로드
+  loadData();
 </script>
 </body>
 </html>
