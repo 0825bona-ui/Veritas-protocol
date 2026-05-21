@@ -999,8 +999,21 @@
     });
   }
 
-  showData(); // 함수 실행
+  showData();
 </script>
+<script type="module">
+  
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+
+  async function showData() {
+      
+      const dashboard = document.getElementById('dashboard'); 
+      if (!dashboard) return; 
+  }
+  showData();
 </script>
 </body>
 </script>
