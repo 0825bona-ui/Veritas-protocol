@@ -85,6 +85,22 @@
     .rep-reason { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 0.5rem; }
     .rep-footer { font-size: 0.72rem; color: var(--muted); opacity: 0.6; font-family: var(--font-mono); }
     .empty-state { text-align: center; padding: 3rem; color: var(--muted); font-size: 0.9rem; }
+    .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .guide-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; position: relative; overflow: hidden; transition: border-color 0.2s; }
+    .guide-card:hover { border-color: var(--accent2); }
+    .guide-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent2); opacity: 0.4; }
+    .guide-num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent2); margin-bottom: 0.75rem; }
+    .guide-card h3 { font-family: var(--font-display); font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .guide-card ul { list-style: none; padding: 0; }
+    .guide-card ul li { font-size: 0.85rem; color: var(--muted); line-height: 1.7; padding-left: 1rem; position: relative; }
+    .guide-card ul li::before { content: '·'; position: absolute; left: 0; color: var(--accent2); }
+    .status-guide { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; align-items: center; }
+    .status-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--muted); }
+    .ai-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .ai-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden; }
+    .ai-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--warn); opacity: 0.5; }
+    .ai-card h3 { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--warn); }
+    .ai-card p { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
   </style>
 </head>
 <body>
@@ -106,6 +122,71 @@
     <div class="hero-btns">
       <button class="btn-primary" onclick="showPage('register', document.querySelectorAll('.nav-btn')[1])">콘텐츠 등록하기</button>
       <button class="btn-outline" onclick="showPage('dashboard', document.querySelectorAll('.nav-btn')[3])">대시보드 보기</button>
+    </div>
+  </div>
+  <hr class="divider">
+  <div class="section">
+    <div class="section-label">// 이용 방법</div>
+    <h2>어떻게 사용하나요?</h2>
+    <div class="guide-grid">
+      <div class="guide-card">
+        <div class="guide-num">STEP 01 — 콘텐츠 등록</div>
+        <h3>내 콘텐츠를 기록하세요</h3>
+        <ul>
+          <li>제목과 발행자(내 이름/소속) 입력</li>
+          <li>원문 텍스트를 붙여넣으면 SHA-256 해시 자동 생성</li>
+          <li>AI 사용 여부와 콘텐츠 유형 선택</li>
+          <li>등록하면 모든 사용자와 공유되는 DB에 저장</li>
+        </ul>
+      </div>
+      <div class="guide-card">
+        <div class="guide-num">STEP 02 — 부인 제기</div>
+        <h3>의심되는 콘텐츠를 신고하세요</h3>
+        <ul>
+          <li>조작이 의심되는 콘텐츠 선택</li>
+          <li>딥페이크 / 허위정보 / 편집 조작 등 유형 선택</li>
+          <li>구체적인 근거 작성</li>
+          <li>제기 즉시 영구 기록 — 취소 불가</li>
+        </ul>
+      </div>
+      <div class="guide-card">
+        <div class="guide-num">STEP 03 — 대시보드</div>
+        <h3>신뢰 현황을 확인하세요</h3>
+        <ul>
+          <li>모든 등록 콘텐츠 실시간 조회</li>
+          <li>부인 건수에 따라 신뢰 등급 자동 표시</li>
+          <li>발행자별 이력 누적 확인 가능</li>
+        </ul>
+        <div class="status-guide">
+          <div class="status-item"><span class="badge badge-safe">신뢰</span> 부인 없음</div>
+          <div class="status-item"><span class="badge badge-warn">주의</span> 부인 1~2건</div>
+          <div class="status-item"><span class="badge badge-danger">위험</span> 부인 3건+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="divider">
+  <div class="section">
+    <div class="section-label">// AI 콘텐츠란?</div>
+    <h2>AI 생성 콘텐츠의 종류</h2>
+    <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem">AI 기술이 발전하면서 다양한 형태의 콘텐츠가 AI에 의해 생성되거나 조작될 수 있습니다. 등록 시 아래 기준을 참고해 AI 사용 여부를 정확히 표시해주세요.</p>
+    <div class="ai-grid">
+      <div class="ai-card">
+        <h3>딥페이크 (Deepfake)</h3>
+        <p>AI가 실존 인물의 얼굴·음성을 합성해 만든 영상이나 이미지. 실제로 말하거나 행동하지 않은 장면을 진짜처럼 만들어냅니다.</p>
+      </div>
+      <div class="ai-card">
+        <h3>AI 생성 텍스트</h3>
+        <p>ChatGPT 등 언어모델이 사람이 쓴 것처럼 생성한 글. 뉴스 기사, SNS 게시물, 논평 등 다양한 형태로 유통됩니다.</p>
+      </div>
+      <div class="ai-card">
+        <h3>AI 생성 이미지</h3>
+        <p>Midjourney, DALL-E 등으로 만든 가상의 사진. 실제로 일어나지 않은 사건이나 존재하지 않는 인물의 사진처럼 보입니다.</p>
+      </div>
+      <div class="ai-card">
+        <h3>AI 보조 편집</h3>
+        <p>원본은 실제이지만 AI로 일부를 수정·삭제·추가한 콘텐츠. 맥락을 왜곡하거나 사실을 변형하는 데 사용될 수 있습니다.</p>
+      </div>
     </div>
   </div>
   <hr class="divider">
